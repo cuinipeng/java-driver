@@ -3,6 +3,7 @@
 ### 3.0.7 (in progress)
 
 - [bug] JAVA-1371: Reintroduce connection pool timeout.
+- [improvement] JAVA-1357: Document that getReplicas only returns replicas of the last token in range.
 
 
 ### 3.0.6
