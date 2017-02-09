@@ -3,6 +3,7 @@
 ### 3.0.7 (in progress)
 
 - [bug] JAVA-1371: Reintroduce connection pool timeout.
+- [documentation] JAVA-1334: Clarify documentation of method `addContactPoints`.
 
 
 ### 3.0.6
