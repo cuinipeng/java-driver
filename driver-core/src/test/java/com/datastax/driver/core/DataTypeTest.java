@@ -331,7 +331,7 @@ public class DataTypeTest {
         }
     }
 
-    @Test(groups = "unit")
+    @Test(groups = "unit", enabled = false)
     public void should_return_same_elements_with_all_primitive_types_using_latest_protocol_version() {
         assertThat(DataType.allPrimitiveTypes(ProtocolVersion.NEWEST_SUPPORTED)).isEqualTo(DataType.allPrimitiveTypes());
     }
