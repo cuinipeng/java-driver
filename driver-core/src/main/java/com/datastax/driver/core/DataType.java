@@ -43,7 +43,6 @@ public abstract class DataType {
         DECIMAL(6),
         DOUBLE(7),
         FLOAT(8),
-        INET(16),
         INT(9),
         TEXT(10) {
             @Override
@@ -61,16 +60,18 @@ public abstract class DataType {
         },
         VARINT(14),
         TIMEUUID(15),
+        INET(16),
+        DATE(17, ProtocolVersion.V4),
+        TIME(18, ProtocolVersion.V4),
+        SMALLINT(19, ProtocolVersion.V4),
+        TINYINT(20, ProtocolVersion.V4),
+        DURATION(21, ProtocolVersion.V5),
         LIST(32),
         SET(34),
         MAP(33),
         CUSTOM(0),
         UDT(48, ProtocolVersion.V3),
-        TUPLE(49, ProtocolVersion.V3),
-        SMALLINT(19, ProtocolVersion.V4),
-        TINYINT(20, ProtocolVersion.V4),
-        DATE(17, ProtocolVersion.V4),
-        TIME(18, ProtocolVersion.V4);
+        TUPLE(49, ProtocolVersion.V3);
 
         final int protocolId;
 
@@ -147,6 +148,7 @@ public abstract class DataType {
         primitiveTypeMap.put(Name.TINYINT, new DataType.NativeType(Name.TINYINT));
         primitiveTypeMap.put(Name.DATE, new DataType.NativeType(Name.DATE));
         primitiveTypeMap.put(Name.TIME, new DataType.NativeType(Name.TIME));
+        primitiveTypeMap.put(Name.DURATION, new DataType.NativeType(Name.DURATION));
     }
 
     private static final Set<DataType> primitiveTypeSet = ImmutableSet.copyOf(primitiveTypeMap.values());
@@ -162,9 +164,14 @@ public abstract class DataType {
         switch (name) {
             case CUSTOM:
                 String className = CBUtil.readString(buffer);
-                return DataTypeClassNameParser.isUserType(className) || DataTypeClassNameParser.isTupleType(className)
-                        ? DataTypeClassNameParser.parseOne(className, protocolVersion, codecRegistry)
-                        : custom(className);
+                if (DataTypeClassNameParser.isDuration(className)) {
+                    return DataType.duration();
+                } else if (DataTypeClassNameParser.isUserType(className) ||
+                        DataTypeClassNameParser.isTupleType(className)) {
+                    return DataTypeClassNameParser.parseOne(className, protocolVersion, codecRegistry);
+                } else {
+                    return custom(className);
+                }
             case LIST:
                 return list(decode(buffer, protocolVersion, codecRegistry));
             case SET:
@@ -499,9 +506,7 @@ public abstract class DataType {
     public static DataType.CustomType custom(String typeClassName) {
         if (typeClassName == null)
             throw new NullPointerException();
-        return DataTypeClassNameParser.isDuration(typeClassName)
-                ? DataType.duration()
-                : new DataType.CustomType(Name.CUSTOM, typeClassName);
+        return new DataType.CustomType(Name.CUSTOM, typeClassName);
     }
 
     /**
@@ -513,8 +518,8 @@ public abstract class DataType {
      *
      * @return the Duration type. The returned instance is a singleton.
      */
-    public static DurationType duration() {
-        return DurationType.instance;
+    public static DataType duration() {
+        return primitiveTypeMap.get(Name.DURATION);
     }
 
     /**
