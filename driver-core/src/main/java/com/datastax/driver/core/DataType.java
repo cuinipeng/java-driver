@@ -783,24 +783,4 @@ public abstract class DataType {
         }
     }
 
-    /**
-     * The Duration type, introduced in Cassandra 3.10.
-     * <p/>
-     * This class is a singleton; to obtain its unique instance,
-     * call {@link #duration()}.
-     */
-    public static class DurationType extends CustomType {
-
-        private static final DurationType instance = new DurationType();
-
-        private DurationType() {
-            super(Name.CUSTOM, "org.apache.cassandra.db.marshal.DurationType");
-        }
-
-        @Override
-        public String toString() {
-            return "duration";
-        }
-    }
-
 }
