@@ -598,7 +598,10 @@ public abstract class DataType {
 
             @Override
             public boolean apply(DataType dataType) {
-                return protocolVersion.compareTo(dataType.getName().minProtocolVersion) >= 0;
+                // Duration is handled separately in DurationIntegrationTest, because it has specific restrictions (e.g.
+                // not allowed in collections).
+                return dataType.getName() != Name.DURATION &&
+                        protocolVersion.compareTo(dataType.getName().minProtocolVersion) >= 0;
             }
         });
     }
