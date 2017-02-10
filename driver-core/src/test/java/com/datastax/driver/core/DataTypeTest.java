@@ -40,7 +40,7 @@ public class DataTypeTest {
     ProtocolVersion protocolVersion = TestUtils.getDesiredProtocolVersion();
 
     static boolean exclude(DataType t) {
-        return t.getName() == DataType.Name.COUNTER;
+        return t.getName() == DataType.Name.COUNTER || t.getName() == DataType.Name.DURATION;
     }
 
     /**
